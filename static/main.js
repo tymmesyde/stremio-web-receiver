@@ -4,26 +4,36 @@ const ERROR_REASON = cast.framework.messages.ErrorType;
 const CAPABILITIES = cast.framework.system.DeviceCapabilities;
 
 const context = cast.framework.CastReceiverContext.getInstance();
+
+const LOG_TAG = 'StremioReceiver';
+const castDebugLogger = cast.debug.CastDebugLogger.getInstance();
+castDebugLogger.loggerLevelByEvents = {
+    'cast.framework.events.category.CORE': cast.framework.LoggerLevel.INFO,
+    'cast.framework.events.EventType.MEDIA_STATUS': cast.framework.LoggerLevel.DEBUG,
+};
+
 const playerManager = context.getPlayerManager();
 const castReceiverOptions = new cast.framework.CastReceiverOptions();
 castReceiverOptions.useShakaForHls = true;
 
 context.addEventListener(cast.framework.system.EventType.READY, () => {
-    const deviceCapabilities = context.getDeviceCapabilities();
-    console.log(deviceCapabilities);
+    if (!castDebugLogger.debugOverlayElement_) {
+        castDebugLogger.setEnabled(true);
+    }
     
+    const deviceCapabilities = context.getDeviceCapabilities();
     if (deviceCapabilities && deviceCapabilities[CAPABILITIES.IS_HDR_SUPPORTED]) {
-        // Write your own event handling code, for example
-        // using the deviceCapabilities[cast.framework.system.DeviceCapabilities.IS_HDR_SUPPORTED] value
+        castDebugLogger.debug(LOG_TAG, 'HDR SUPPORTED');
     }
 
     if (deviceCapabilities && deviceCapabilities[CAPABILITIES.IS_DV_SUPPORTED]) {
-        // Write your own event handling code, for example
-        // using the deviceCapabilities[cast.framework.system.DeviceCapabilities.IS_DV_SUPPORTED] value
+        castDebugLogger.debug(LOG_TAG, 'DV SUPPORTED');
     }
 });
 
 playerManager.setMessageInterceptor(MESSAGE.LOAD, (request) => {
+    castDebugLogger.debug(LOG_TAG, request);
+
     const error = new cast.framework.messages.ErrorData(ERROR.LOAD_FAILED);
     if (!request.media) {
         error.reason = ERROR_REASON.INVALID_PARAM;
