@@ -1,0 +1,10 @@
+body {
+    --logo-image: url('https://www.stremio.com/website/stremio-logo-small.png');
+    --playback-logo-image: url('https://www.stremio.com/website/stremio-logo-small.png');
+}
+
+cast-media-player {
+    --theme-hue: 100;
+    --progress-color: rgb(123, 91, 245);
+    --background-image: linear-gradient(41deg, rgb(12, 11, 17), rgb(26, 23, 62) 100%);
+}
