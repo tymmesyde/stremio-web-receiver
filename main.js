@@ -15,10 +15,7 @@ castDebugLogger.loggerLevelByEvents = {
 };
 
 const playerManager = context.getPlayerManager();
-const playbackConfig = (Object.assign(new cast.framework.PlaybackConfig(), playerManager.getPlaybackConfig()));
-playbackConfig.autoResumeNumberOfSegments = 1;
-playerManager.setPlaybackConfig(playbackConfig);
-playerManager.setSupportedMediaCommands(COMMAND.SEEK | COMMAND.PAUSE);
+playerManager.setSupportedMediaCommands(COMMAND.LOAD | COMMAND.SEEK | COMMAND.PLAY | COMMAND.PAUSE | COMMAND.STOP);
 
 const castReceiverOptions = new cast.framework.CastReceiverOptions();
 castReceiverOptions.useShakaForHls = true;
@@ -31,8 +28,6 @@ context.addEventListener(EVENT.READY, () => {
     }
     
     const deviceCapabilities = context.getDeviceCapabilities();
-    console.log(deviceCapabilities);
-    
     if (deviceCapabilities && deviceCapabilities[CAPABILITIES.IS_HDR_SUPPORTED]) {
         castDebugLogger.debug(LOG_TAG, 'HDR SUPPORTED');
     }
@@ -46,7 +41,7 @@ playerManager.addEventListener(EVENT.MEDIA_STATUS, (event) => {
     castDebugLogger.debug(LOG_TAG, 'MEDIA_STATUS');
 });
 
-playerManager.setMessageInterceptor(MESSAGE.LOAD, loadRequestData => {
+playerManager.setMessageInterceptor(MESSAGE.LOAD, (loadRequestData) => {
     castDebugLogger.debug(LOG_TAG, 'LOAD');
 
     const error = new cast.framework.messages.ErrorData(ERROR.LOAD_FAILED);
@@ -57,6 +52,20 @@ playerManager.setMessageInterceptor(MESSAGE.LOAD, loadRequestData => {
 
     if (!loadRequestData.media.entity) {
         return loadRequestData;
+    }
+
+    const { origin, searchParams } = new URL(loadRequestData.media.entity);
+    const mediaURL = searchParams.get('mediaURL');
+
+    if (mediaURL) {
+		fetch(`${origin}/hlsv2/probe?mediaURL=${encodeURIComponent(mediaURL)}`)
+			.then((res) => res.json())
+			.then((probe) => {
+				console.log(probe);
+			})
+			.catch((e) => {
+				console.error(e);
+			});
     }
 
     return fetch(loadRequestData.media.entity)
