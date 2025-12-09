@@ -10,7 +10,6 @@ const context = cast.framework.CastReceiverContext.getInstance();
 const LOG_RECEIVER_TAG = 'StremioReceiver';
 
 const playerManager = context.getPlayerManager();
-// playerManager.setSupportedMediaCommands(COMMAND.LOAD | COMMAND.SEEK | COMMAND.PLAY | COMMAND.PAUSE | COMMAND.STOP | COMMAND.GET_STATUS);
 
 const castReceiverOptions = new cast.framework.CastReceiverOptions();
 castReceiverOptions.useShakaForHls = true;
@@ -47,63 +46,47 @@ const getSupportedCodecs = () => {
 
 context.addEventListener(EVENT.READY, () => {
     console.log('READY');
-    
-    const deviceCapabilities = context.getDeviceCapabilities();
-    if (deviceCapabilities && deviceCapabilities[CAPABILITIES.IS_HDR_SUPPORTED]) {
-        console.log('HDR SUPPORTED');
-    }
-
-    if (deviceCapabilities && deviceCapabilities[CAPABILITIES.IS_DV_SUPPORTED]) {
-        console.log('DV SUPPORTED');
-    }
 });
 
 playerManager.addEventListener(EVENT.MEDIA_STATUS, (event) => {
     console.log('MEDIA_STATUS');
 });
 
-playerManager.setMessageInterceptor(MESSAGE.LOAD, (loadRequestData) => {
+playerManager.setMessageInterceptor(MESSAGE.LOAD, (request) => {
     console.log('LOAD');
+    console.log(request);
 
     const error = new cast.framework.messages.ErrorData(ERROR.LOAD_FAILED);
-    if (!loadRequestData.media || !loadRequestData.media.contentId) {
+    if (!request.media || !request.media.contentId) {
         error.reason = ERROR_REASON.INVALID_PARAM;
         return error;
     }
 
-    const streamUrl = new URL(loadRequestData.media.contentId);
+    const streamUrl = new URL(request.media.contentId);
 
     const { videoCodecs, audioCodecs } = getSupportedCodecs();
     videoCodecs.forEach((codec) => streamUrl.searchParams.append('videoCodecs', codec));
     audioCodecs.forEach((codec) => streamUrl.searchParams.append('audioCodecs', codec));
 
-    loadRequestData.media.contentId = streamUrl.toString();
+    request.media.contentId = streamUrl.toString();
 
-    // fetch(`${origin}/hlsv2/probe?mediaURL=${encodeURIComponent(mediaURL)}`)
-    //     .then((res) => res.json())
-    //     .then((probe) => {
-    //         console.log(probe);
-    //     })
-    //     .catch((e) => {
-    //         console.error(e);
-    //     });
+    return request;
+});
 
-    return loadRequestData;
+playerManager.addEventListener(EVENT.PLAYER_LOAD_COMPLETE, () => {
+    console.log('PLAYER_LOAD_COMPLETE');
 
-    // return fetch(loadRequestData.media.contentUrl)
-    //     .then((asset) => {
-    //         if (!asset) {
-    //             throw ERROR_REASON.INVALID_REQUEST;
-    //         }
+    const audioTracksManager = playerManager.getAudioTracksManager();
 
-    //         loadRequestData.media.contentUrl = asset.url;
-    //         loadRequestData.media.metadata = asset.metadata;
-    //         loadRequestData.media.tracks = asset.tracks;
-    //         return loadRequestData;
-    //     }).catch((error) => {
-    //         error.reason = reason;
-    //         return error;
-    //     });
+    const tracks = audioTracksManager.getTracks();
+    console.log(tracks);
+
+    // audioTracksManager.setActiveById(tracks[0].trackId);
+});
+
+playerManager.setMessageInterceptor(MESSAGE.EDIT_AUDIO_TRACKS, (request) => {
+    console.log('EDIT_AUDIO_TRACKS');
+    console.log(request);
 });
 
 context.start(castReceiverOptions);
