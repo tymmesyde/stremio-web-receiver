@@ -14,7 +14,7 @@ castDebugLogger.loggerLevelByTags = {};
 castDebugLogger.loggerLevelByTags[LOG_RECEIVER_TAG] = cast.framework.LoggerLevel.DEBUG;
 
 const playerManager = context.getPlayerManager();
-playerManager.setSupportedMediaCommands(COMMAND.LOAD | COMMAND.SEEK | COMMAND.PLAY | COMMAND.PAUSE | COMMAND.STOP);
+playerManager.setSupportedMediaCommands(COMMAND.LOAD | COMMAND.SEEK | COMMAND.PLAY | COMMAND.PAUSE | COMMAND.STOP | COMMAND.GET_STATUS);
 
 const castReceiverOptions = new cast.framework.CastReceiverOptions();
 castReceiverOptions.useShakaForHls = true;
@@ -54,11 +54,11 @@ playerManager.setMessageInterceptor(MESSAGE.LOAD, (loadRequestData) => {
         return error;
     }
 
-    if (!loadRequestData.media.entity) {
+    if (!loadRequestData.media.contentUrl) {
         return loadRequestData;
     }
 
-    const { origin, searchParams } = new URL(loadRequestData.media.entity);
+    const { origin, searchParams } = new URL(loadRequestData.media.contentUrl);
     const mediaURL = searchParams.get('mediaURL');
 
     if (mediaURL) {
@@ -72,20 +72,20 @@ playerManager.setMessageInterceptor(MESSAGE.LOAD, (loadRequestData) => {
 			});
     }
 
-    return fetch(loadRequestData.media.entity)
-        .then((asset) => {
-            if (!asset) {
-                throw ERROR_REASON.INVALID_REQUEST;
-            }
+    // return fetch(loadRequestData.media.contentUrl)
+    //     .then((asset) => {
+    //         if (!asset) {
+    //             throw ERROR_REASON.INVALID_REQUEST;
+    //         }
 
-            loadRequestData.media.contentUrl = asset.url;
-            loadRequestData.media.metadata = asset.metadata;
-            loadRequestData.media.tracks = asset.tracks;
-            return loadRequestData;
-        }).catch((error) => {
-            error.reason = reason;
-            return error;
-        });
-    });
+    //         loadRequestData.media.contentUrl = asset.url;
+    //         loadRequestData.media.metadata = asset.metadata;
+    //         loadRequestData.media.tracks = asset.tracks;
+    //         return loadRequestData;
+    //     }).catch((error) => {
+    //         error.reason = reason;
+    //         return error;
+    //     });
+});
 
 context.start(castReceiverOptions);
