@@ -49,7 +49,7 @@ playerManager.addEventListener(EVENT.MEDIA_STATUS, (event) => {
 playerManager.setMessageInterceptor(MESSAGE.LOAD, loadRequestData => {
     castDebugLogger.debug(LOG_TAG, 'LOAD');
 
-    const error = new cast.framework.messages.ErrorData(ERROR_MESSAGE.LOAD_FAILED);
+    const error = new cast.framework.messages.ErrorData(ERROR.LOAD_FAILED);
     if (!loadRequestData.media) {
         error.reason = ERROR_REASON.INVALID_PARAM;
         return error;
