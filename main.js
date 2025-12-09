@@ -1,8 +1,8 @@
 const MESSAGE = cast.framework.messages.MessageType;
 const ERROR = cast.framework.messages.ErrorType;
-const EVENT = cast.framework.events.EventType;
+const ERROR_REASON = cast.framework.messages.ErrorReason;
 const COMMAND = cast.framework.messages.Command;
-const ERROR_REASON = cast.framework.messages.ErrorType;
+const EVENT = cast.framework.events.EventType;
 const CAPABILITIES = cast.framework.system.DeviceCapabilities;
 
 const context = cast.framework.CastReceiverContext.getInstance();
@@ -31,6 +31,8 @@ context.addEventListener(EVENT.READY, () => {
     }
     
     const deviceCapabilities = context.getDeviceCapabilities();
+    console.log(deviceCapabilities);
+    
     if (deviceCapabilities && deviceCapabilities[CAPABILITIES.IS_HDR_SUPPORTED]) {
         castDebugLogger.debug(LOG_TAG, 'HDR SUPPORTED');
     }
@@ -44,35 +46,33 @@ playerManager.addEventListener(EVENT.MEDIA_STATUS, (event) => {
     castDebugLogger.debug(LOG_TAG, 'MEDIA_STATUS');
 });
 
+playerManager.setMessageInterceptor(MESSAGE.LOAD, loadRequestData => {
+    castDebugLogger.debug(LOG_TAG, 'LOAD');
 
-// playerManager.setMessageInterceptor(MESSAGE.LOAD, (request) => {
-//     castDebugLogger.debug(LOG_TAG, request);
+    const error = new cast.framework.messages.ErrorData(ERROR_MESSAGE.LOAD_FAILED);
+    if (!loadRequestData.media) {
+        error.reason = ERROR_REASON.INVALID_PARAM;
+        return error;
+    }
 
-//     const error = new cast.framework.messages.ErrorData(ERROR.LOAD_FAILED);
-//     if (!request.media) {
-//         error.reason = ERROR_REASON.INVALID_PARAM;
-//         return error;
-//     }
+    if (!loadRequestData.media.entity) {
+        return loadRequestData;
+    }
 
-//     if (!request.media.entity) {
-//         return request;
-//     }
+    return fetch(loadRequestData.media.entity)
+        .then(asset => {
+            if (!asset) {
+                throw ERROR_REASON.INVALID_REQUEST;
+            }
 
-//     return thirdparty
-//         .fetchAssetAndAuth(request.media.entity, request.credentials)
-//         .then((asset) => {
-//             if (!asset) {
-//                 throw ERROR_REASON.INVALID_REQUEST;
-//             }
-
-//             request.media.contentUrl = asset.url;
-//             request.media.metadata = asset.metadata;
-//             request.media.tracks = asset.tracks;
-//             return request;
-//         }).catch(reason => {
-//             error.reason = reason;
-//             return error;
-//         });
-// });
+            loadRequestData.media.contentUrl = asset.url;
+            loadRequestData.media.metadata = asset.metadata;
+            loadRequestData.media.tracks = asset.tracks;
+            return loadRequestData;
+        }).catch(reason => {
+            error.reason = reason;
+            return error;
+        });
+    });
 
 context.start(castReceiverOptions);
