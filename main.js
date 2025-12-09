@@ -45,6 +45,7 @@ playerManager.addEventListener(EVENT.MEDIA_STATUS, (event) => {
 
 playerManager.setMessageInterceptor(MESSAGE.LOAD, (loadRequestData) => {
     debug('LOAD');
+    console.log(loadRequestData.media);
 
     const error = new cast.framework.messages.ErrorData(ERROR.LOAD_FAILED);
     if (!loadRequestData.media || !loadRequestData.media.contentUrl) {
