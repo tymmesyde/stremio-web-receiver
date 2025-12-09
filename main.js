@@ -19,9 +19,7 @@ playerManager.setSupportedMediaCommands(COMMAND.LOAD | COMMAND.SEEK | COMMAND.PL
 const castReceiverOptions = new cast.framework.CastReceiverOptions();
 castReceiverOptions.useShakaForHls = true;
 
-const debug = (message) => {
-    castDebugLogger.debug(LOG_RECEIVER_TAG, message);
-};
+const debug = (message) => castDebugLogger.debug(LOG_RECEIVER_TAG, message);
 
 context.addEventListener(EVENT.READY, () => {
     if (!castDebugLogger.debugOverlayElement_) {
@@ -71,6 +69,10 @@ playerManager.setMessageInterceptor(MESSAGE.LOAD, (loadRequestData) => {
 				console.error(e);
 			});
     }
+
+    return Promise.resolve()
+        .then(() => loadRequestData)
+        .catch((error) => error);
 
     // return fetch(loadRequestData.media.contentUrl)
     //     .then((asset) => {
