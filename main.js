@@ -17,7 +17,7 @@ castReceiverOptions.useShakaForHls = true;
 
 const getSupportedCodecs = () => {
     const canPlay = (type, codecs) => {
-        Object.entries(codecs)
+        return Object.entries(codecs)
             .filter(([codec]) => context.canDisplayType(`${type}/mp4`, codec))
             .map(([, name]) => name);
     };
