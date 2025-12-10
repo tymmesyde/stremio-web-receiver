@@ -8,7 +8,7 @@ const CUSTOM_NAMESPACE = 'urn:x-cast:com.stremio.cast';
 const context = cast.framework.CastReceiverContext.getInstance();
 const playerManager = context.getPlayerManager();
 
-const playbackConfig = (Object.assign(new cast.framework.PlaybackConfig(), playerManager.getPlaybackConfig()));
+const playbackConfig = playerManager.getPlaybackConfig();
 playbackConfig.autoResumeNumberOfSegments = 1;
 playbackConfig.enableSmoothLiveRefresh = true;
 
