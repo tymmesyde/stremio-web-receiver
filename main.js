@@ -88,6 +88,8 @@ playerManager.addEventListener(EVENT.PLAYER_LOAD_COMPLETE, () => {
 playerManager.setMessageInterceptor(MESSAGE.EDIT_TRACKS_INFO, (request) => {
     console.log('EDIT_TRACKS_INFO');
     console.log(request);
+    
+    return request;
 });
 
 context.start(castReceiverOptions);
