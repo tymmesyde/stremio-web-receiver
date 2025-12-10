@@ -8,15 +8,15 @@ const CUSTOM_NAMESPACE = 'urn:x-cast:com.stremio.cast';
 const context = cast.framework.CastReceiverContext.getInstance();
 const playerManager = context.getPlayerManager();
 
-const playbackConfig = (Object.assign(new cast.framework.PlaybackConfig(), playerManager.getPlaybackConfig()));
+const playbackConfig = new cast.framework.PlaybackConfig();
 playbackConfig.manifestRequestHandler = (requestInfo) => {
     console.log('MANIFEST_REQUEST:', requestInfo.url);
     return requestInfo;
 };
 
-playbackConfig.autoResumeNumberOfSegments = 2;
-playbackConfig.initialBandwidth = 5000000;
-playbackConfig.enableSmoothLiveRefresh = true;
+playbackConfig.autoResumeDuration = 5;
+playbackConfig.autoPauseDuration = 0;
+playbackConfig.autoResumeNumberOfSegments = 1;
 
 console.log('playbackConfig', playbackConfig);
 playerManager.setPlaybackConfig(playbackConfig);
