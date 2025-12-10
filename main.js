@@ -27,8 +27,7 @@ context.addEventListener(EVENT.READY, () => {
 
 let externalTextTracks = [];
 context.addCustomMessageListener(CUSTOM_NAMESPACE, (message) => {
-    console.log(CUSTOM_NAMESPACE);
-    console.log(message);
+    console.log('CUSTOM_MESSAGE', message);
 
     if (!message.data || !message.data.type) {
         error.reason = ERROR_REASON.INVALID_PARAM;
@@ -51,6 +50,10 @@ playerManager.setMessageInterceptor(MESSAGE.LOAD, (request) => {
     if (!request.media || !request.media.contentId) {
         error.reason = ERROR_REASON.INVALID_PARAM;
         return error;
+    }
+
+    if (request.media.customData && request.media.customData.externalTextTracks) {
+        externalTextTracks = request.media.customData.externalTextTracks;
     }
 
     const streamUrl = new URL(request.media.contentId);
@@ -83,6 +86,7 @@ playerManager.addEventListener(EVENT.PLAYER_LOAD_COMPLETE, () => {
         track.trackContentId = uri;
         track.language = language;
         track.name = label;
+        return track;
     });
 
     textTracksManager.addTracks(tracks);
@@ -114,7 +118,7 @@ const getSupportedCodecs = () => {
     };
     
     return {
-        videoCodecs: canPlay('video', videoCodecs),
-        audioCodecs: canPlay('audio', audioCodecs),
+        videoCodecs: canPlay(videoCodecs),
+        audioCodecs: canPlay(audioCodecs),
     };
 };
