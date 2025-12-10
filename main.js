@@ -16,7 +16,7 @@ playbackConfig.autoResumeDuration = 5;
 playbackConfig.autoPauseDuration = 0;
 playbackConfig.autoResumeNumberOfSegments = 1;
 
-console.log('playbackConfig', playbackConfig);
+console.log('PLAYBACK_CONFIG', playbackConfig);
 playerManager.setPlaybackConfig(playbackConfig);
 
 const castReceiverOptions = new cast.framework.CastReceiverOptions();
@@ -50,7 +50,7 @@ playerManager.setMessageInterceptor(MESSAGE.LOAD, (request) => {
     videoCodecs.forEach((codec) => streamUrl.searchParams.append('videoCodecs', codec));
     audioCodecs.forEach((codec) => streamUrl.searchParams.append('audioCodecs', codec));
 
-    streamUrl.searchParams.append('maxAudioChannels', 2);
+    // streamUrl.searchParams.append('maxAudioChannels', 2);
 
     request.media.contentId = streamUrl.toString();
 
@@ -62,11 +62,11 @@ playerManager.addEventListener(EVENT.PLAYER_LOAD_COMPLETE, () => {
 
     const audioTracksManager = playerManager.getAudioTracksManager();
     const audioTracks = audioTracksManager.getTracks();
-    console.log('audioTracks', audioTracks);
+    console.log('AUDIO_TRACKS', audioTracks);
 
     const textTracksManager = playerManager.getTextTracksManager();
     const textTracks = textTracksManager.getTracks();
-    console.log('textTracks', textTracks);
+    console.log('TEXT_TRACKS', textTracks);
     
     const tracks = externalTextTracks.map(({ mimeType, uri, language, label }) => {
         const track = textTracksManager.createTrack();
@@ -89,31 +89,24 @@ playerManager.setMessageInterceptor(MESSAGE.EDIT_TRACKS_INFO, (request) => {
 context.start(castReceiverOptions);
 
 const getSupportedCodecs = () => {
-    const canPlay = (type, codecs) => {
+    const canPlay = (codecs) => {
         return Object.entries(codecs)
-            .filter(([codec]) => context.canDisplayType(`${type}/mp4`, codec))
-            .map(([, name]) => name);
+            .filter(([mediaType]) => context.canDisplayType(mediaType))
+            .map(([, codecName]) => codecName);
     };
 
     const videoCodecs = {
-        'avc1.42E01E': 'h264',
-        'hev1.1.6.L150.B0': 'h265',
-        'vp8': 'vp8',
-        'vp9': 'vp9',
+        'video/mp4; codecs="avc1.42E01E"': 'h264',
+        'video/mp4; codecs="hev1.1.6.L150.B0"': 'h265',
     };
 
     const audioCodecs = {
-        'mp4a.40.2': 'aac',
-        'mp3': 'mp3',
-        'ac-3': 'ac3',
-        'ec-3': 'eac3',
-        'vorbis': 'vorbis',
-        'opus': 'opus',
-        'flac': 'flac',
+        'audio/mp4; codecs="mp4a.40.5"': 'aac',
+        'audio/mp4; codecs="mp4a.69"': 'mp3',
     };
     
     return {
-        videoCodecs: canPlay('video', videoCodecs),
-        audioCodecs: canPlay('audio', audioCodecs),
+        videoCodecs: canPlay(videoCodecs),
+        audioCodecs: canPlay(audioCodecs),
     };
 };
