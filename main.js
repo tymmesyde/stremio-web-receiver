@@ -8,7 +8,7 @@ const playerManager = context.getPlayerManager();
 
 const playbackConfig = new cast.framework.PlaybackConfig();
 playbackConfig.manifestRequestHandler = (requestInfo) => {
-    console.log('MANIFEST_REQUEST:', requestInfo.url);
+    console.log('MANIFEST', requestInfo.url);
     return requestInfo;
 };
 
@@ -89,24 +89,31 @@ playerManager.setMessageInterceptor(MESSAGE.EDIT_TRACKS_INFO, (request) => {
 context.start(castReceiverOptions);
 
 const getSupportedCodecs = () => {
-    const canPlay = (codecs) => {
+    const canPlay = (type, codecs) => {
         return Object.entries(codecs)
-            .filter(([mediaType]) => context.canDisplayType(mediaType))
-            .map(([, codecName]) => codecName);
+            .filter(([codec]) => context.canDisplayType(`${type}/mp4`, codec))
+            .map(([, name]) => name);
     };
 
     const videoCodecs = {
-        'video/mp4; codecs="avc1.42E01E"': 'h264',
-        'video/mp4; codecs="hev1.1.6.L150.B0"': 'h265',
+        'avc1.42E01E': 'h264',
+        'hev1.1.6.L150.B0': 'h265',
+        'vp8': 'vp8',
+        'vp9': 'vp9',
     };
 
     const audioCodecs = {
-        'audio/mp4; codecs="mp4a.40.5"': 'aac',
-        'audio/mp4; codecs="mp4a.69"': 'mp3',
+        'mp4a.40.2': 'aac',
+        'mp3': 'mp3',
+        'ac-3': 'ac3',
+        'ec-3': 'eac3',
+        'vorbis': 'vorbis',
+        'opus': 'opus',
+        'flac': 'flac',
     };
     
     return {
-        videoCodecs: canPlay(videoCodecs),
-        audioCodecs: canPlay(audioCodecs),
+        videoCodecs: canPlay('video', videoCodecs),
+        audioCodecs: canPlay('audio', audioCodecs),
     };
 };
