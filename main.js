@@ -18,6 +18,7 @@ context.addEventListener(EVENT.READY, () => {
     console.log('READY');
 });
 
+let externalTextTracks = [];
 context.addCustomMessageListener(CUSTOM_NAMESPACE, (message) => {
     console.log(CUSTOM_NAMESPACE);
     console.log(message);
@@ -28,17 +29,13 @@ context.addCustomMessageListener(CUSTOM_NAMESPACE, (message) => {
     }
 
     if (message.data.type === 'externalTextTracks' && message.data.tracks) {
-        const textTracksManager = playerManager.getTextTracksManager();
-        
-        const tracks = message.data.tracks.map(({ mimeType, uri, language, label }) => {
+        externalTextTracks = message.data.tracks.map(({ mimeType, uri, language, label }) => {
             const track = textTracksManager.createTrack();
             track.trackContentType = mimeType;
             track.trackContentId = uri;
             track.language = language;
             track.name = label;
         });
-
-        textTracksManager.addTracks(tracks);
     }
 });
 
@@ -79,6 +76,10 @@ playerManager.addEventListener(EVENT.PLAYER_LOAD_COMPLETE, () => {
     const textTracksManager = playerManager.getTextTracksManager();
     const textTracks = textTracksManager.getTracks();
     console.log('textTracks', textTracks);
+    
+    if (externalTextTracks.length > 0) {
+        textTracksManager.addTracks(externalTextTracks);
+    }
 });
 
 playerManager.setMessageInterceptor(MESSAGE.EDIT_TRACKS_INFO, (request) => {
