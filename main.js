@@ -15,7 +15,6 @@ const castReceiverOptions = new cast.framework.CastReceiverOptions();
 castReceiverOptions.useShakaForHls = true;
 
 const getSupportedCodecs = () => {
-
     const canPlay = (codecs) => {
         return Object.entries(codecs)
             .filter(([mediaType]) => context.canDisplayType(mediaType))
@@ -23,7 +22,7 @@ const getSupportedCodecs = () => {
     };
 
     const videoCodecs = {
-        'video/mp4; codecs="avc1.42E01E, mp4a.40.5"': 'h264',
+        'video/mp4; codecs="avc1.42E01E"': 'h264',
         'video/mp4; codecs="hev1.1.6.L150.B0"': 'h265',
     };
 
@@ -61,6 +60,8 @@ playerManager.setMessageInterceptor(MESSAGE.LOAD, (request) => {
     const { videoCodecs, audioCodecs } = getSupportedCodecs();
     videoCodecs.forEach((codec) => streamUrl.searchParams.append('videoCodecs', codec));
     audioCodecs.forEach((codec) => streamUrl.searchParams.append('audioCodecs', codec));
+
+    streamUrl.searchParams.append('maxAudioChannels', 2);
 
     request.media.contentId = streamUrl.toString();
 
