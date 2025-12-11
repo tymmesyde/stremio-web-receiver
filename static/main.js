@@ -5,6 +5,14 @@ const ERROR_REASON = cast.framework.messages.ErrorReason;
 
 const playbackConfig = new cast.framework.PlaybackConfig();
 playbackConfig.autoResumeDuration = 5;
+playbackConfig.shakaConfig = {
+    // https://shaka-player-demo.appspot.com/docs/api/shaka.extern.html#.StreamingConfiguration
+    streaming: {
+        preferNativeHls: true,
+        bufferingGoal: 5,
+        bufferBehind: 5,
+    },
+};
 
 const options = new cast.framework.CastReceiverOptions();
 options.useShakaForHls = true;
