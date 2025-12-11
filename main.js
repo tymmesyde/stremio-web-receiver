@@ -30,10 +30,10 @@ playbackConfig.shakaConfig = {
     streaming: {
         bufferingGoal: 10,
         bufferBehind: 3,
+        // https://shaka-player-demo.appspot.com/docs/api/shaka.extern.html#.RetryParameters
         retryParameters: {
             maxAttempts: 5,
             timeout: 10000,
-            stallTimeout: 1000,
             baseDelay: 0,
         },
     }
