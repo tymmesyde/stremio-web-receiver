@@ -3,7 +3,17 @@ const EVENT = cast.framework.events.EventType;
 const ERROR = cast.framework.messages.ErrorType;
 const ERROR_REASON = cast.framework.messages.ErrorReason;
 
+const castReceiverOptions = new cast.framework.CastReceiverOptions();
+castReceiverOptions.useShakaForHls = true;
+
+const castDebugLogger = cast.debug.CastDebugLogger.getInstance();
+castDebugLogger.loggerLevelByEvents = {
+    'cast.framework.events.category.CORE': cast.framework.LoggerLevel.INFO,
+    'cast.framework.events.EventType.MEDIA_STATUS': cast.framework.LoggerLevel.DEBUG,
+};
+
 const context = cast.framework.CastReceiverContext.getInstance();
+context.setLoggerLevel(cast.framework.LoggerLevel.DEBUG);
 
 const playerManager = context.getPlayerManager();
 
@@ -15,18 +25,17 @@ playbackConfig.manifestRequestHandler = (requestInfo) => {
 
 playbackConfig.autoResumeDuration = 5;
 playbackConfig.autoResumeNumberOfSegments = 1;
+playbackConfig.shakaConfig = {
+    // https://shaka-player-demo.appspot.com/docs/api/externs_shaka_player.js.html#line1865
+    streaming: {
+        lowLatencyMode: true,
+        bufferingGoal: 10,
+        bufferBehind: 10,
+    }
+};
 
 console.log('PLAYBACK_CONFIG', playbackConfig);
 playerManager.setPlaybackConfig(playbackConfig);
-
-const castReceiverOptions = new cast.framework.CastReceiverOptions();
-castReceiverOptions.useShakaForHls = true;
-
-const castDebugLogger = cast.debug.CastDebugLogger.getInstance();
-castDebugLogger.loggerLevelByEvents = {
-    'cast.framework.events.category.CORE': cast.framework.LoggerLevel.INFO,
-    'cast.framework.events.EventType.MEDIA_STATUS': cast.framework.LoggerLevel.DEBUG,
-};
 
 let externalTextTracks = [];
 
