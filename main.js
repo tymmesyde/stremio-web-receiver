@@ -77,7 +77,7 @@ playerManager.setMessageInterceptor(MESSAGE.LOAD, (request) => {
 
         request.media.contentId = streamUrl.toString();
     } catch(e) {
-        console.error('Failed to set transcoding params');
+        console.error('Failed to set transcoding params', e);
     }
 
     return request;
