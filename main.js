@@ -4,6 +4,7 @@ const ERROR = cast.framework.messages.ErrorType;
 const ERROR_REASON = cast.framework.messages.ErrorReason;
 
 const context = cast.framework.CastReceiverContext.getInstance();
+
 const playerManager = context.getPlayerManager();
 
 const playbackConfig = new cast.framework.PlaybackConfig();
@@ -21,10 +22,20 @@ playerManager.setPlaybackConfig(playbackConfig);
 const castReceiverOptions = new cast.framework.CastReceiverOptions();
 castReceiverOptions.useShakaForHls = true;
 
+const castDebugLogger = cast.debug.CastDebugLogger.getInstance();
+castDebugLogger.loggerLevelByEvents = {
+    'cast.framework.events.category.CORE': cast.framework.LoggerLevel.INFO,
+    'cast.framework.events.EventType.MEDIA_STATUS': cast.framework.LoggerLevel.DEBUG,
+};
+
 let externalTextTracks = [];
 
 context.addEventListener(EVENT.READY, () => {
     console.log('READY');
+
+    if (!castDebugLogger.debugOverlayElement_) {
+        castDebugLogger.setEnabled(true);
+    }
 });
 
 playerManager.addEventListener(EVENT.MEDIA_STATUS, (event) => {
@@ -121,14 +132,11 @@ const getSupportedCodecs = () => {
         };
 
         const videoCodecs = {
-            'video/mp4; codecs="vp8"': 'vp8',
-            'video/mp4; codecs="vp9"': 'vp9',
             'video/mp4; codecs="avc1.42E01E"': 'h264',
             'video/mp4; codecs="hev1.1.6.L150.B0"': 'h265',
         };
 
         const audioCodecs = {
-            'audio/mp4; codecs="vorbis"': 'vorbis',
             'audio/mp4; codecs="mp4a.40.5"': 'aac',
             'audio/mp4; codecs="mp4a.69"': 'mp3',
         };
