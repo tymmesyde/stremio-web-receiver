@@ -69,9 +69,12 @@ playerManager.setMessageInterceptor(MESSAGE.LOAD, (request) => {
         const { videoCodecs, audioCodecs } = getSupportedCodecs();
         videoCodecs.forEach((codec) => streamUrl.searchParams.append('videoCodecs', codec));
         audioCodecs.forEach((codec) => streamUrl.searchParams.append('audioCodecs', codec));
+        console.log('SUPPORTED_VIDEO_CODECS', videoCodecs);
+        console.log('SUPPORTED_AUDIO_CODECS', audioCodecs);
 
         const maxWidth = getSupportedMaxWidth();
         streamUrl.searchParams.append('maxWidth', maxWidth);
+        console.log('SUPPORTED_MAX_WIDTH', maxWidth);
 
         streamUrl.searchParams.append('maxAudioChannels', 2);
 
@@ -145,6 +148,7 @@ const getSupportedMaxWidth = (videoCodec) => {
     const mediaType = VIDEO_CODECS[videoCodec];
     const maxResolution = RESOLUTIONS
         .find(([width, height]) => context.canDisplayType(mediaType, null, width, height));
+    console.log(maxResolution);
 
     if (maxResolution) return maxResolution[0];
     return RESOLUTIONS[RESOLUTIONS.length - 1][0];
