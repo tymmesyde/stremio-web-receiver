@@ -82,19 +82,23 @@ playerManager.addEventListener(EVENT.PLAYER_LOAD_COMPLETE, () => {
 
     addExternalTextTracks(externalTextTracks);
 
-    const audioTracksManager = playerManager.getAudioTracksManager();
-    const audioTracks = audioTracksManager.getTracks();
-    console.log('AUDIO_TRACKS', audioTracks);
+    try {
+        const audioTracksManager = playerManager.getAudioTracksManager();
+        const audioTracks = audioTracksManager.getTracks();
+        console.log('AUDIO_TRACKS', audioTracks);
 
-    const firstAudioTrack = audioTracks[0];
-    firstAudioTrack && audioTracksManager.setActiveById(firstAudioTrack.trackId);
+        const firstAudioTrack = audioTracks[0];
+        firstAudioTrack && audioTracksManager.setActiveById(firstAudioTrack.trackId);
 
-    const textTracksManager = playerManager.getTextTracksManager();
-    const textTracks = textTracksManager.getTracks();
-    console.log('TEXT_TRACKS', textTracks);
+        const textTracksManager = playerManager.getTextTracksManager();
+        const textTracks = textTracksManager.getTracks();
+        console.log('TEXT_TRACKS', textTracks);
 
-    const firstTextTrack = textTracks[0];
-    firstTextTrack && textTracksManager.setActiveByIds([firstTextTrack.trackId]);
+        const firstTextTrack = textTracks[0];
+        firstTextTrack && textTracksManager.setActiveByIds([firstTextTrack.trackId]);
+    } catch (e) {
+        console.log('Failed to get tracks info', e);
+    }
 });
 
 playerManager.setMessageInterceptor(MESSAGE.EDIT_TRACKS_INFO, (request) => {
