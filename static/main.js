@@ -50,6 +50,8 @@ playerManager.setMessageInterceptor(MESSAGE.LOAD, (request) => {
         const { videoCodecs, audioCodecs } = getSupportedCodecs();
         videoCodecs.forEach((codec) => streamUrl.searchParams.append('videoCodecs', codec));
         audioCodecs.forEach((codec) => streamUrl.searchParams.append('audioCodecs', codec));
+        console.log('SUPPORTED_VIDEO_CODECS', videoCodecs);
+        console.log('SUPPORTED_AUDIO_CODECS', audioCodecs);
 
         streamUrl.searchParams.append('maxAudioChannels', 2);
 
