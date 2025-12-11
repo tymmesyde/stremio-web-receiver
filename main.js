@@ -4,19 +4,19 @@ const ERROR = cast.framework.messages.ErrorType;
 const ERROR_REASON = cast.framework.messages.ErrorReason;
 
 const playbackConfig = new cast.framework.PlaybackConfig();
-playbackConfig.autoResumeDuration = 5;
-playbackConfig.enableUITextDisplayer = false;
+// playbackConfig.autoResumeDuration = 5;
+// playbackConfig.enableUITextDisplayer = false;
 // playbackConfig.shakaConfig = {
 //     // https://shaka-player-demo.appspot.com/docs/api/shaka.extern.html#.StreamingConfiguration
 //     streaming: {
 //         preferNativeHls: true,
 //         bufferingGoal: 5,
 //         bufferBehind: 5,
-//         // https://shaka-player-demo.appspot.com/docs/api/shaka.extern.html#.RetryParameters
-//         retryParameters: {
-//             maxAttempts: 3,
-//             connectionTimeout: 20,
-//         },
+//         // // https://shaka-player-demo.appspot.com/docs/api/shaka.extern.html#.RetryParameters
+//         // retryParameters: {
+//         //     maxAttempts: 3,
+//         //     connectionTimeout: 20,
+//         // },
 //     },
 // };
 
@@ -72,8 +72,8 @@ playerManager.setMessageInterceptor(MESSAGE.LOAD, (request) => {
         console.log('SUPPORTED_VIDEO_CODECS', videoCodecs);
         console.log('SUPPORTED_AUDIO_CODECS', audioCodecs);
 
-        // streamUrl.searchParams.append('maxAudioChannels', 2);
-        // streamUrl.searchParams.append('forceTranscoding', 1);
+        streamUrl.searchParams.append('maxAudioChannels', 2);
+        streamUrl.searchParams.append('forceTranscoding', 1);
 
         request.media.contentId = streamUrl.toString();
     } catch(e) {
