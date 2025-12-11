@@ -29,7 +29,14 @@ playbackConfig.shakaConfig = {
     // https://shaka-player-demo.appspot.com/docs/api/shaka.extern.html#.StreamingConfiguration
     streaming: {
         bufferingGoal: 10,
-        bufferBehind: 10,
+        rebufferingGoal: 2,
+        bufferBehind: 3,
+        retryParameters: {
+            maxAttempts: 5,
+            baseDelay: 1000,
+            backoffFactor: 2,
+            fuzzFactor: 0.5,
+        },
     }
 };
 
