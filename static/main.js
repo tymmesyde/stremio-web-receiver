@@ -3,24 +3,6 @@ const EVENT = cast.framework.events.EventType;
 const ERROR = cast.framework.messages.ErrorType;
 const ERROR_REASON = cast.framework.messages.ErrorReason;
 
-const VIDEO_CODECS = {
-    'h264': 'video/mp4; codecs="avc1.42E01E"',
-    'h265': 'video/mp4; codecs="hev1.1.6.L150.B0"',
-};
-
-const AUDIO_CODECS = {
-    'aac': 'audio/mp4; codecs="mp4a.40.5"',
-    'mp3': 'audio/mp4; codecs="mp4a.69"',
-};
-
-const RESOLUTIONS = [
-    [3840, 2160],
-    [2560, 1440],
-    [1920, 1080],
-    [1280, 720],
-    [854, 480],
-];
-
 const context = cast.framework.CastReceiverContext.getInstance();
 const playerManager = context.getPlayerManager();
 
@@ -69,18 +51,12 @@ playerManager.setMessageInterceptor(MESSAGE.LOAD, (request) => {
         const { videoCodecs, audioCodecs } = getSupportedCodecs();
         videoCodecs.forEach((codec) => streamUrl.searchParams.append('videoCodecs', codec));
         audioCodecs.forEach((codec) => streamUrl.searchParams.append('audioCodecs', codec));
-        console.log('SUPPORTED_VIDEO_CODECS', videoCodecs);
-        console.log('SUPPORTED_AUDIO_CODECS', audioCodecs);
-
-        const maxWidth = getSupportedMaxWidth(videoCodecs);
-        streamUrl.searchParams.append('maxWidth', maxWidth);
-        console.log('SUPPORTED_MAX_WIDTH', maxWidth);
 
         streamUrl.searchParams.append('maxAudioChannels', 2);
 
         request.media.contentId = streamUrl.toString();
     } catch(e) {
-        console.error('Failed to set transcoding params', e);
+        console.error('Failed to set transcoding params');
     }
 
     return request;
@@ -134,27 +110,22 @@ const addExternalTextTracks = (externalTextTracks) => {
 const getSupportedCodecs = () => {
     const canPlay = (codecs) => {
         return Object.entries(codecs)
-            .filter(([, mediaType]) => context.canDisplayType(mediaType))
-            .map(([codecName]) => codecName);
+            .filter(([mediaType]) => context.canDisplayType(mediaType))
+            .map(([, codecName]) => codecName);
     };
 
+    const videoCodecs = {
+        'video/mp4; codecs="avc1.42E01E"': 'h264',
+        'video/mp4; codecs="hev1.1.6.L150.B0"': 'h265',
+    };
+
+    const audioCodecs = {
+        'audio/mp4; codecs="mp4a.40.5"': 'aac',
+        'audio/mp4; codecs="mp4a.69"': 'mp3',
+    };
+    
     return {
-        videoCodecs: canPlay(VIDEO_CODECS),
-        audioCodecs: canPlay(AUDIO_CODECS),
+        videoCodecs: canPlay(videoCodecs),
+        audioCodecs: canPlay(audioCodecs),
     };
-};
-
-const getSupportedMaxWidth = (videoCodecs) => {
-    const maxWidths = videoCodecs
-        .map((codecName) => {
-            const mediaType = VIDEO_CODECS[codecName];
-            const maxResolution = RESOLUTIONS
-                .find(([width, height]) => context.canDisplayType(mediaType, null, width, height));
-            
-            return maxResolution ? maxResolution[0] : null;
-        })
-        .filter((width) => width !== null);
-
-    if (maxWidths.length > 0) return Math.min(...maxWidths);
-    return RESOLUTIONS[RESOLUTIONS.length - 1][0];
 };
