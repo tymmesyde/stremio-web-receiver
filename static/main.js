@@ -121,14 +121,11 @@ const getSupportedCodecs = () => {
         };
 
         const videoCodecs = {
-            'video/mp4; codecs="vp8"': 'vp8',
-            'video/mp4; codecs="vp9"': 'vp9',
             'video/mp4; codecs="avc1.42E01E"': 'h264',
             'video/mp4; codecs="hev1.1.6.L150.B0"': 'h265',
         };
 
         const audioCodecs = {
-            'audio/mp4; codecs="vorbis"': 'vorbis',
             'audio/mp4; codecs="mp4a.40.5"': 'aac',
             'audio/mp4; codecs="mp4a.69"': 'mp3',
         };
