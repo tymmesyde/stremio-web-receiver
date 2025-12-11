@@ -73,6 +73,7 @@ playerManager.setMessageInterceptor(MESSAGE.LOAD, (request) => {
         console.log('SUPPORTED_AUDIO_CODECS', audioCodecs);
 
         streamUrl.searchParams.append('maxAudioChannels', 2);
+        streamUrl.searchParams.append('maxWidth', 720);
         streamUrl.searchParams.append('forceTranscoding', 1);
 
         request.media.contentId = streamUrl.toString();
