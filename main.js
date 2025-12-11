@@ -67,11 +67,13 @@ playerManager.setMessageInterceptor(MESSAGE.LOAD, (request) => {
         const streamUrl = new URL(request.media.contentId);
 
         const { videoCodecs, audioCodecs } = getSupportedCodecs();
-        videoCodecs.forEach((codec) => streamUrl.searchParams.append('videoCodecs', codec));
-        audioCodecs.forEach((codec) => streamUrl.searchParams.append('audioCodecs', codec));
+        // videoCodecs.forEach((codec) => streamUrl.searchParams.append('videoCodecs', codec));
+        // audioCodecs.forEach((codec) => streamUrl.searchParams.append('audioCodecs', codec));
         console.log('SUPPORTED_VIDEO_CODECS', videoCodecs);
         console.log('SUPPORTED_AUDIO_CODECS', audioCodecs);
 
+        streamUrl.searchParams.append('videoCodecs', 'h265');
+        streamUrl.searchParams.append('audioCodecs', 'mp3');
         streamUrl.searchParams.append('maxAudioChannels', 2);
         streamUrl.searchParams.append('maxWidth', 720);
         streamUrl.searchParams.append('forceTranscoding', 1);
