@@ -13,7 +13,6 @@ playbackConfig.manifestRequestHandler = (requestInfo) => {
 };
 
 playbackConfig.autoResumeDuration = 5;
-playbackConfig.autoPauseDuration = 0;
 playbackConfig.autoResumeNumberOfSegments = 1;
 
 console.log('PLAYBACK_CONFIG', playbackConfig);
