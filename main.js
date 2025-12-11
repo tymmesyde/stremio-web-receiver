@@ -30,7 +30,6 @@ playbackConfig.shakaConfig = {
     streaming: {
         bufferingGoal: 10,
         bufferBehind: 3,
-        rebufferingGoal: 5,
         retryParameters: {
             maxAttempts: 5,
             timeout: 10000,
