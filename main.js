@@ -3,8 +3,13 @@ const EVENT = cast.framework.events.EventType;
 const ERROR = cast.framework.messages.ErrorType;
 const ERROR_REASON = cast.framework.messages.ErrorReason;
 
-const castReceiverOptions = new cast.framework.CastReceiverOptions();
-castReceiverOptions.useShakaForHls = true;
+const playbackConfig = new cast.framework.PlaybackConfig();
+playbackConfig.autoResumeDuration = 5;
+
+const options = new cast.framework.CastReceiverOptions();
+options.useShakaForHls = true;
+options.shakaVersion = 'v4.16.11';
+options.playbackConfig = playbackConfig;
 
 const castDebugLogger = cast.debug.CastDebugLogger.getInstance();
 castDebugLogger.loggerLevelByEvents = {
@@ -16,18 +21,6 @@ const context = cast.framework.CastReceiverContext.getInstance();
 context.setLoggerLevel(cast.framework.LoggerLevel.DEBUG);
 
 const playerManager = context.getPlayerManager();
-
-const playbackConfig = new cast.framework.PlaybackConfig();
-playbackConfig.manifestRequestHandler = (requestInfo) => {
-    console.log('MANIFEST', requestInfo.url);
-    return requestInfo;
-};
-
-playbackConfig.autoResumeDuration = 5;
-playbackConfig.autoResumeNumberOfSegments = 1;
-
-console.log('PLAYBACK_CONFIG', playbackConfig);
-playerManager.setPlaybackConfig(playbackConfig);
 
 let externalTextTracks = [];
 
@@ -66,6 +59,7 @@ playerManager.setMessageInterceptor(MESSAGE.LOAD, (request) => {
         console.log('SUPPORTED_AUDIO_CODECS', audioCodecs);
 
         streamUrl.searchParams.append('maxAudioChannels', 2);
+        streamUrl.searchParams.append('forceTranscoding', 1);
 
         request.media.contentId = streamUrl.toString();
     } catch(e) {
@@ -101,7 +95,7 @@ playerManager.setMessageInterceptor(MESSAGE.EDIT_TRACKS_INFO, (request) => {
     return request;
 });
 
-context.start(castReceiverOptions);
+context.start(options);
 
 const addExternalTextTracks = (externalTextTracks) => {
     try {
