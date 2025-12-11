@@ -73,7 +73,7 @@ playerManager.setMessageInterceptor(MESSAGE.LOAD, (request) => {
         console.log('SUPPORTED_AUDIO_CODECS', audioCodecs);
 
         const maxWidth = getSupportedMaxWidth(videoCodecs);
-        streamUrl.searchParams.append('maxWidth', maxWidth);
+        // streamUrl.searchParams.append('maxWidth', maxWidth);
         console.log('SUPPORTED_MAX_WIDTH', maxWidth);
 
         streamUrl.searchParams.append('maxAudioChannels', 2);
