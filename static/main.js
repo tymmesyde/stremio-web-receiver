@@ -5,6 +5,7 @@ const ERROR_REASON = cast.framework.messages.ErrorReason;
 
 const playbackConfig = new cast.framework.PlaybackConfig();
 playbackConfig.autoResumeDuration = 5;
+playbackConfig.enableUITextDisplayer = false;
 playbackConfig.shakaConfig = {
     // https://shaka-player-demo.appspot.com/docs/api/shaka.extern.html#.StreamingConfiguration
     streaming: {
