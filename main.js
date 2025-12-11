@@ -26,9 +26,8 @@ playbackConfig.manifestRequestHandler = (requestInfo) => {
 playbackConfig.autoResumeDuration = 5;
 playbackConfig.autoResumeNumberOfSegments = 1;
 playbackConfig.shakaConfig = {
-    // https://shaka-player-demo.appspot.com/docs/api/externs_shaka_player.js.html#line1865
+    // https://shaka-player-demo.appspot.com/docs/api/shaka.extern.html#.StreamingConfiguration
     streaming: {
-        lowLatencyMode: true,
         bufferingGoal: 10,
         bufferBehind: 10,
     }
