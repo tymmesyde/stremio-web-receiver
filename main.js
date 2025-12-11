@@ -28,6 +28,7 @@ playbackConfig.autoResumeNumberOfSegments = 1;
 playbackConfig.shakaConfig = {
     // https://shaka-player-demo.appspot.com/docs/api/shaka.extern.html#.StreamingConfiguration
     streaming: {
+        preferNativeHls: true,
         bufferingGoal: 10,
         bufferBehind: 3,
         // https://shaka-player-demo.appspot.com/docs/api/shaka.extern.html#.RetryParameters
