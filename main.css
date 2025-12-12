@@ -9,3 +9,18 @@ cast-media-player {
     --background-image: linear-gradient(41deg, rgb(12, 11, 17), rgb(26, 23, 62) 100%);
     --font-family: 'Plus Jakarta Sans';
 }
+
+#stream-info {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    background-color: black;
+}
+
+#stream-info p {
+    font-family: 'Plus Jakarta Sans';
+    color: white;
+}

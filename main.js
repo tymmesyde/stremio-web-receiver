@@ -38,7 +38,7 @@ const playerManager = context.getPlayerManager();
 
 let streamUrl = null;
 let externalTextTracks = [];
-let transcodeInfoInterval = null;
+let streamInfoInterval = null;
 
 context.addEventListener(EVENT.READY, () => {
     console.log('READY');
@@ -109,7 +109,7 @@ playerManager.addEventListener(EVENT.PLAYER_LOAD_COMPLETE, () => {
         console.log('Failed to get tracks info', e);
     }
 
-    updateTranscodingData();
+    updateStreamInfo();
 });
 
 playerManager.setMessageInterceptor(MESSAGE.EDIT_TRACKS_INFO, (request) => {
@@ -121,8 +121,8 @@ playerManager.setMessageInterceptor(MESSAGE.EDIT_TRACKS_INFO, (request) => {
 playerManager.addEventListener(EVENT.REQUEST_STOP, (event) => {
     console.log('REQUEST_STOP', event);
 
-    transcodeInfoInterval && clearInterval(transcodeInfoInterval);
-    transcodeInfoInterval = null;
+    streamInfoInterval && clearInterval(streamInfoInterval);
+    streamInfoInterval = null;
 });
 
 context.start(options);
@@ -177,17 +177,34 @@ const getSupportedCodecs = () => {
     }
 };
 
-
-const updateTranscodingData = () => {
-    transcodeInfoInterval && clearInterval(transcodeInfoInterval);
-    transcodeInfoInterval = setInterval(() => {
+const updateStreamInfo = () => {
+    streamInfoInterval && clearInterval(streamInfoInterval);
+    streamInfoInterval = setInterval(() => {
         if (!streamUrl) return;
 
         const { origin } = streamUrl;
         const transcodeData = `${origin}/transcode-data`;
+
+        const videoCodecElement = document.getElementById('video-codec');
+        const audioCodecElement = document.getElementById('audio-codec');
+        const videoTranscoding = document.getElementById('video-transcoding');
+        const audioTranscoding = document.getElementById('audio-transcoding');
+
         fetch(transcodeData)
             .then((response) => response.json())
             .then((body) => {
+                const {
+                    originalVideoCodec,
+                    originalAudioCodec,
+                    isVideoTranscoding,
+                    isAudioTranscoding,
+                } = body;
+
+                videoCodecElement.innerText = originalVideoCodec;
+                audioCodecElement.innerText = originalAudioCodec;
+                videoTranscoding.innerText = isVideoTranscoding;
+                audioTranscoding.innerText = isAudioTranscoding;
+
                 console.log('TRANSCODING_INFO', body);
             })
             .catch((e) => {
