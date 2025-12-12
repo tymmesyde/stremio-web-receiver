@@ -36,6 +36,11 @@ context.setLoggerLevel(cast.framework.LoggerLevel.DEBUG);
 
 const playerManager = context.getPlayerManager();
 
+const videoCodecElement = document.getElementById('video-codec');
+const audioCodecElement = document.getElementById('audio-codec');
+const videoTranscoding = document.getElementById('video-transcoding');
+const audioTranscoding = document.getElementById('audio-transcoding');
+
 let streamUrl = null;
 let externalTextTracks = [];
 let streamInfoInterval = null;
@@ -54,6 +59,11 @@ playerManager.addEventListener(EVENT.MEDIA_STATUS, (event) => {
 
 playerManager.setMessageInterceptor(MESSAGE.LOAD, (request) => {
     console.log('LOAD', request);
+
+    videoCodecElement.innerText = 'Loading';
+    audioCodecElement.innerText = 'Loading';
+    videoTranscoding.innerText = 'Loading';
+    audioTranscoding.innerText = 'Loading';
 
     const error = new cast.framework.messages.ErrorData(ERROR.LOAD_FAILED);
     if (!request.media || !request.media.contentId) {
@@ -178,11 +188,6 @@ const updateStreamInfo = () => {
 
         const { origin } = streamUrl;
         const transcodeData = `${origin}/transcode-data`;
-
-        const videoCodecElement = document.getElementById('video-codec');
-        const audioCodecElement = document.getElementById('audio-codec');
-        const videoTranscoding = document.getElementById('video-transcoding');
-        const audioTranscoding = document.getElementById('audio-transcoding');
 
         fetch(transcodeData)
             .then((response) => response.json())
