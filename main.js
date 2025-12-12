@@ -15,7 +15,7 @@ playbackConfig.shakaConfig = {
         // https://shaka-player-demo.appspot.com/docs/api/shaka.extern.html#.RetryParameters
         retryParameters: {
             // maxAttempts: 3,
-            connectionTimeout: 30,
+            connectionTimeout: 30000,
         },
     },
 };
