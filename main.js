@@ -11,9 +11,9 @@ playbackConfig.autoResumeNumberOfSegments = 1;
 playbackConfig.shakaConfig = {
     // https://shaka-player-demo.appspot.com/docs/api/shaka.extern.html#.StreamingConfiguration
     streaming: {
-        // preferNativeHls: true,
-        bufferingGoal: 4 * 3,
-        bufferBehind: 0,
+        preferNativeHls: true,
+        // bufferingGoal: 4 * 3,
+        // bufferBehind: 0,
         lowLatencyMode: false,
         // https://shaka-player-demo.appspot.com/docs/api/shaka.extern.html#.RetryParameters
         // retryParameters: {
@@ -28,6 +28,8 @@ const options = new cast.framework.CastReceiverOptions();
 options.useShakaForHls = true;
 // options.shakaVersion = '4.16.11';
 options.playbackConfig = playbackConfig;
+
+console.log('OPTIONS', options);
 
 const castDebugLogger = cast.debug.CastDebugLogger.getInstance();
 castDebugLogger.loggerLevelByEvents = {
