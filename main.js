@@ -104,7 +104,7 @@ playerManager.addEventListener(EVENT.PLAYER_LOAD_COMPLETE, () => {
     }
 
     streamInfoInterval && clearInterval(streamInfoInterval);
-    streamInfoInterval = setInterval(updateStreamInfo, 5000);
+    streamInfoInterval = setInterval(() => updateStreamInfo(), 5000);
 });
 
 playerManager.setMessageInterceptor(MESSAGE.EDIT_TRACKS_INFO, (request) => {
