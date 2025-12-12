@@ -11,16 +11,29 @@ playbackConfig.autoResumeNumberOfSegments = 1;
 playbackConfig.shakaConfig = {
     // https://shaka-player-demo.appspot.com/docs/api/shaka.extern.html#.StreamingConfiguration
     streaming: {
-        preferNativeHls: true,
-        // bufferingGoal: 4 * 3,
-        // bufferBehind: 0,
         lowLatencyMode: false,
-        // https://shaka-player-demo.appspot.com/docs/api/shaka.extern.html#.RetryParameters
-        // retryParameters: {
-        //     // maxAttempts: 3,
-        //     stallTimeout: 30000,
-        //     connectionTimeout: 30000,
-        // },
+        bufferBehind: 30,
+        bufferingGoal: 50,
+        retryParameters: {
+            maxAttempts: 20,
+            timeout: 30000,
+            stallTimeout: 10000,
+            connectionTimeout: 120000,
+            baseDelay: 1000,
+            backoffFactor: 1.0,
+            fuzzFactor: 0,
+        },
+    },
+    manifest: {
+        retryParameters: {
+            maxAttempts: 10,
+            timeout: 30000,
+            baseDelay: 1000,
+            backoffFactor: 2.0,
+            fuzzFactor: 0.5,
+        },
+        defaultPresentationDelay: 3,
+        availabilityWindowOverride: 0,
     },
 };
 
