@@ -4,7 +4,7 @@ const ERROR = cast.framework.messages.ErrorType;
 const ERROR_REASON = cast.framework.messages.ErrorReason;
 
 const playbackConfig = new cast.framework.PlaybackConfig();
-// playbackConfig.autoResumeDuration = 5;
+playbackConfig.autoResumeDuration = 5;
 // playbackConfig.enableUITextDisplayer = false;
 // playbackConfig.shakaConfig = {
 //     // https://shaka-player-demo.appspot.com/docs/api/shaka.extern.html#.StreamingConfiguration
@@ -22,7 +22,7 @@ const playbackConfig = new cast.framework.PlaybackConfig();
 
 const options = new cast.framework.CastReceiverOptions();
 options.useShakaForHls = true;
-options.shakaVersion = '4.16.11';
+// options.shakaVersion = '4.16.11';
 options.playbackConfig = playbackConfig;
 
 const castDebugLogger = cast.debug.CastDebugLogger.getInstance();
