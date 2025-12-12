@@ -151,8 +151,10 @@ const getSupportedCodecs = () => {
         };
 
         const audioCodecs = {
-            'audio/mp4; codecs="mp4a.40.5"': 'aac',
             'audio/mp4; codecs="mp4a.69"': 'mp3',
+            'audio/mp4; codecs="mp4a.40.5"': 'aac',
+            'audio/mp4; codecs="ac-3""': 'ac3',
+            'audio/mp4; codecs="ec-3"': 'aec3',
         };
         
         return {
