@@ -36,7 +36,9 @@ context.setLoggerLevel(cast.framework.LoggerLevel.DEBUG);
 
 const playerManager = context.getPlayerManager();
 
+let streamUrl = null;
 let externalTextTracks = [];
+let transcodeInfoInterval = null;
 
 context.addEventListener(EVENT.READY, () => {
     console.log('READY');
@@ -64,7 +66,7 @@ playerManager.setMessageInterceptor(MESSAGE.LOAD, (request) => {
     }
 
     try {
-        const streamUrl = new URL(request.media.contentId);
+        streamUrl = new URL(request.media.contentId);
 
         const { videoCodecs, audioCodecs } = getSupportedCodecs();
         videoCodecs.forEach((codec) => streamUrl.searchParams.append('videoCodecs', codec));
@@ -106,12 +108,21 @@ playerManager.addEventListener(EVENT.PLAYER_LOAD_COMPLETE, () => {
     } catch (e) {
         console.log('Failed to get tracks info', e);
     }
+
+    updateTranscodingData();
 });
 
 playerManager.setMessageInterceptor(MESSAGE.EDIT_TRACKS_INFO, (request) => {
     console.log('EDIT_TRACKS_INFO', request);
 
     return request;
+});
+
+playerManager.addEventListener(MESSAGE.REQUEST_STOP, (event) => {
+    console.log('REQUEST_STOP', event);
+
+    transcodeInfoInterval && clearInterval(transcodeInfoInterval);
+    transcodeInfoInterval = null;
 });
 
 context.start(options);
@@ -164,4 +175,23 @@ const getSupportedCodecs = () => {
     } catch(e) {
         console.error('Failed to get supported codecs', e);
     }
+};
+
+
+const updateTranscodingData = () => {
+    transcodeInfoInterval && clearInterval(transcodeInfoInterval);
+    transcodeInfoInterval = setInterval(() => {
+        if (!streamUrl) return;
+
+        const { origin } = streamUrl;
+        const transcodeData = `${origin}/transcode-data`;
+        fetch(transcodeData)
+            .then((response) => response.json())
+            .then((body) => {
+                console.log('TRANSCODING_INFO', body);
+            })
+            .catch((e) => {
+                console.error('Failed to get transcode data', e);
+            });
+    } , 3000);
 };
