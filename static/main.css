@@ -9,3 +9,34 @@ cast-media-player {
     --background-image: linear-gradient(41deg, rgb(12, 11, 17), rgb(26, 23, 62) 100%);
     --font-family: 'Plus Jakarta Sans';
 }
+
+#stream-info {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    background-color: black;
+}
+
+#stream-info .info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+#stream-info .name {
+    font-size: 1rem;
+    font-family: 'Plus Jakarta Sans';
+    color: white;
+}
+
+#stream-info .value {
+    font-size: 1rem;
+    font-family: 'Plus Jakarta Sans';
+    color: white;
+    opacity: 0.8;
+}

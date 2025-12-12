@@ -36,7 +36,9 @@ context.setLoggerLevel(cast.framework.LoggerLevel.DEBUG);
 
 const playerManager = context.getPlayerManager();
 
+let streamUrl = null;
 let externalTextTracks = [];
+let streamInfoInterval = null;
 
 context.addEventListener(EVENT.READY, () => {
     console.log('READY');
@@ -64,7 +66,7 @@ playerManager.setMessageInterceptor(MESSAGE.LOAD, (request) => {
     }
 
     try {
-        const streamUrl = new URL(request.media.contentId);
+        streamUrl = new URL(request.media.contentId);
 
         const { videoCodecs, audioCodecs } = getSupportedCodecs();
         videoCodecs.forEach((codec) => streamUrl.searchParams.append('videoCodecs', codec));
@@ -106,12 +108,21 @@ playerManager.addEventListener(EVENT.PLAYER_LOAD_COMPLETE, () => {
     } catch (e) {
         console.log('Failed to get tracks info', e);
     }
+
+    updateStreamInfo();
 });
 
 playerManager.setMessageInterceptor(MESSAGE.EDIT_TRACKS_INFO, (request) => {
     console.log('EDIT_TRACKS_INFO', request);
 
     return request;
+});
+
+playerManager.addEventListener(EVENT.REQUEST_STOP, (event) => {
+    console.log('REQUEST_STOP', event);
+
+    streamInfoInterval && clearInterval(streamInfoInterval);
+    streamInfoInterval = null;
 });
 
 context.start(options);
@@ -164,4 +175,40 @@ const getSupportedCodecs = () => {
     } catch(e) {
         console.error('Failed to get supported codecs', e);
     }
+};
+
+const updateStreamInfo = () => {
+    streamInfoInterval && clearInterval(streamInfoInterval);
+    streamInfoInterval = setInterval(() => {
+        if (!streamUrl) return;
+
+        const { origin } = streamUrl;
+        const transcodeData = `${origin}/transcode-data`;
+
+        const videoCodecElement = document.getElementById('video-codec');
+        const audioCodecElement = document.getElementById('audio-codec');
+        const videoTranscoding = document.getElementById('video-transcoding');
+        const audioTranscoding = document.getElementById('audio-transcoding');
+
+        fetch(transcodeData)
+            .then((response) => response.json())
+            .then((body) => {
+                const {
+                    originalVideoCodec,
+                    originalAudioCodec,
+                    isVideoTranscoding,
+                    isAudioTranscoding,
+                } = body;
+
+                videoCodecElement.innerText = originalVideoCodec ?? 'Loading';
+                audioCodecElement.innerText = originalAudioCodec ?? 'Loading';
+                videoTranscoding.innerText = isVideoTranscoding ?? 'Loading';
+                audioTranscoding.innerText = isAudioTranscoding ?? 'Loading';
+
+                console.log('TRANSCODING_INFO', body);
+            })
+            .catch((e) => {
+                console.error('Failed to get transcode data', e);
+            });
+    } , 3000);
 };
